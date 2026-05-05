@@ -21,4 +21,45 @@ namespace smartftl {
 
         static constexpr uint64_t BLOCK_SIZE_BYTES = static_cast<uint64_t>(PAGES_PER_BLOCK) * PAGE_SIZE_BYTES; // 4,194,304 bytes (4MB)
     };
+
+    struct PhysicalAddress {
+        uint16_t channel = 0;
+        uint16_t die = 0;
+        uint32_t block = 0;
+        uint32_t page = 0;
+
+        [[nodiscard]] uint64_t to_linear_page() const noexcept {
+            constexpr uint64_t pages_per_die = static_cast<uint64_t>(NandGeometry::BLOCKS_PER_DIE) * NandGeometry::PAGES_PER_BLOCK; // 131,072
+            constexpr uint64_t pages_per_channel = pages_per_die * NandGeometry::DIES_PER_CHANNEL;
+
+            return (channel * pages_per_channel) + (die * pages_per_die) + (static_cast<uint64_t>(block) * NandGeometry::PAGES_PER_BLOCK) + page;
+        }
+
+        [[nodiscard]] static PhysicalAddress from_linear_page(uint64_t linear) noexcept {
+            constexpr uint64_t pages_per_die = static_cast<uint64_t>(NandGeometry::BLOCKS_PER_DIE) * NandGeometry::PAGES_PER_BLOCK; // 131,072
+            constexpr uint64_t pages_per_channel = pages_per_die * NandGeometry::DIES_PER_CHANNEL;
+
+            PhysicalAddress a;
+            a.channel = static_cast<uint16_t>(linear / pages_per_channel);
+            linear %= pages_per_channel;
+
+            a.die = static_cast<uint16_t>(linear / pages_per_die);
+            linear %= pages_per_die;
+
+            a.block = static_cast<uint32_t>(linear / NandGeometry::PAGES_PER_BLOCK);
+            a.page = static_cast<uint32_t>(linear % NandGeometry::PAGES_PER_BLOCK);
+
+            return a;
+        }
+
+        [[nodiscard]] uint64_t to_linear_block() const noexcept {
+            return (static_cast<uint64_t>(channel) * NandGeometry::DIES_PER_CHANNEL * NandGeometry::BLOCKS_PER_DIE)
+                 + (static_cast<uint64_t>(die) * NandGeometry::BLOCKS_PER_DIE)
+                 + block;
+        }
+
+        bool operator==(const PhysicalAddress& o) const noexcept {
+            return channel == o.channel && die == o.die && block == o.block && page == o.page;
+        }
+    };
 };
