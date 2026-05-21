@@ -62,4 +62,7 @@ namespace smartftl {
             return channel == o.channel && die == o.die && block == o.block && page == o.page;
         }
     };
+
+    inline constexpr PhysicalAddress PPA_INVALID{0xFFFF, 0xFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
+    
 };
