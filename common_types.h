@@ -93,4 +93,20 @@ namespace smartftl {
             return next_free_page - valid_page_count;
         }
     };
+
+    enum class TempStream : uint8_t {
+        HOT = 0,
+        WARM = 1,
+        COLD = 2,
+        NUM_STREAMS = 3
+    };
+
+    inline const char* stream_name(TempStream s) noexcept {
+        switch(s) {
+            case TempStream::HOT: return "HOT";
+            case TempStream::WARM: return "WARM";
+            case TempStream::COLD: return "COLD";
+            default: return "???";
+        }
+    }
 };
