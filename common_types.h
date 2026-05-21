@@ -70,4 +70,27 @@ namespace smartftl {
         VALID = 0x01,
         INVALID = 0x00
     };
+
+    struct BlockMeta {
+        uint32_t erase_count = 0;
+        uint32_t valid_page_count = 0;
+        uint32_t next_free_page = 0;
+        PageState page_states[NandGeometry:: PAGES_PER_BLOCK];
+
+        BlockMeta() {
+            std::fill(std::begin(page_states), std::end(page_states), PageState::ERASED);
+        }
+
+        [[nodiscard]] bool is_full() const noexcept {
+            return next_free_page >= NandGeometry::PAGES_PER_BLOCK;
+        }
+
+        [[nodiscard]] bool is_empty() const noexcept {
+            return valid_page_count == 0 && next_free_page == 0;
+        }
+
+        [[nodiscard]] uint32_t garbage_count() const noexcept {
+            return next_free_page - valid_page_count;
+        }
+    };
 };
