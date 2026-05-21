@@ -122,4 +122,18 @@ namespace smartftl {
         uint64_t lba;
         uint64_t timestamp; // Monotonic counter (e.g., I/O sequence #)
     };
-};
+
+    struct FTLStats {
+        uint64_t host_write_pages = 0;
+        uint64_t nand_write_pages = 0;
+        uint64_t host_read_pages = 0;
+        uint64_t nand_read_pages = 0;
+        uint64_t gc_invocations = 0;
+        uint64_t gc_pages_moved = 0;
+        uint64_t total_erases = 0;
+
+        [[nodiscard]] double write_amplification() const noexcept {
+            return (host_write_pages == 0) ? 1.0 : static_cast<double>(nand_write_pages) / host_write_pages;
+        }
+    };
+}
