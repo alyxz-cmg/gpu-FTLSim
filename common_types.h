@@ -117,4 +117,9 @@ namespace smartftl {
         uint32_t trace_window = 1 << 20; // 1M entries in circular buffer
         uint32_t max_lba_count = 1 << 20; // Max unique LBAs tracked
     };
+
+    struct TraceEntry {
+        uint64_t lba;
+        uint64_t timestamp; // Monotonic counter (e.g., I/O sequence #)
+    };
 };
