@@ -64,5 +64,10 @@ namespace smartftl {
     };
 
     inline constexpr PhysicalAddress PPA_INVALID{0xFFFF, 0xFFFF, 0xFFFFFFFF, 0xFFFFFFFF};
-    
+
+    enum class PageState: uint8_t {
+        ERASED = 0xFF,
+        VALID = 0x01,
+        INVALID = 0x00
+    };
 };
