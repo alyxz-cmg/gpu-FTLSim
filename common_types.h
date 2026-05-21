@@ -109,4 +109,12 @@ namespace smartftl {
             default: return "???";
         }
     }
+
+    struct OracleConfig {
+        float lambda = 0.001f; // Temporal decay rate
+        float hot_threshold = 0.7f; // (Normalized score >= this) == HOT
+        float warm_threshold = 0.3f; // (Normalized score >= this) == WARM, below COLD
+        uint32_t trace_window = 1 << 20; // 1M entries in circular buffer
+        uint32_t max_lba_count = 1 << 20; // Max unique LBAs tracked
+    };
 };
